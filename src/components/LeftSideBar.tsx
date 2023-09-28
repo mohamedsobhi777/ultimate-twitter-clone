@@ -1,3 +1,4 @@
+'use client';
 
 // Assets
 import { BiHomeCircle } from 'react-icons/bi'
@@ -6,6 +7,7 @@ import { BsBell, BsEnvelope, BsThreeDots, BsTwitter } from 'react-icons/bs'
 import { BsBookmark } from 'react-icons/bs'
 import { BiUser } from 'react-icons/bi'
 import Link from 'next/link'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 const NAVIGATION_ITEMS = [
     {
@@ -40,14 +42,25 @@ const NAVIGATION_ITEMS = [
 ]
 
 const LeftSideBar = () => {
-    return (
-        <section className='fixed w-[275px] flex flex-col h-screen items-stretch px-6'>
+    const supabase = createClientComponentClient()
 
-            <div className='flex flex-col items-stretch h-full space-y-4 mt-4'>
+    async function signInWithEmail() {
+        const { data, error } = await supabase.auth.signInWithOtp({
+            email: 'example@email.com',
+            options: {
+                emailRedirectTo: 'https://example.com/welcome',
+            },
+        })
+    }
+
+    return (
+        <section className='sticky top-0 w-[23%] xl:flex hidden flex-col h-screen items-stretch text-white'>
+
+            <div className='flex flex-col items-stretch h-full mt-4 space-y-4'>
                 {
                     NAVIGATION_ITEMS.map((item) => (
                         <div key={item.title}>
-                            <Link className='hover:bg-white/10 text-2xl transition duration-200 rounded-3xl py-2 px-6 flex items-start w-fit justify-center space-x-4' href={`/${item.title.toLowerCase()}`} key={item.title}>
+                            <Link className='flex items-start justify-center px-6 py-2 space-x-4 text-2xl text-white transition duration-200 hover:bg-white/10 rounded-3xl w-fit' href={`/${item.title.toLowerCase()}`} key={item.title}>
                                 <div><item.icon /> </div>
                                 {
                                     item.title !== 'Twitter' && <div>{item.title}</div>
@@ -56,17 +69,17 @@ const LeftSideBar = () => {
                         </div>
                     ))
                 }
-                <button className='rounded-full m-4 bg-primary p-4 text-2xl text-center hover:bg-opacity-70 transition duration-200'>
+                <button className='p-4 m-4 text-2xl text-center transition duration-200 rounded-full bg-twitterColor hover:bg-opacity-70'>
                     Tweet
                 </button>
             </div>
 
-            <button className='rounded-full flex items-center space-x-2 m-4 bg-transparent p-4 text-center hover:bg-white/20 transition duration-200 w-full justify-between'>
+            <button className='flex items-center justify-between w-full p-4 space-x-2 text-center transition duration-200 bg-transparent rounded-full hover:bg-white/20'>
                 <div className='flex items-center space-x-2'>
 
-                    <div className='rounded-full bg-slate-400 w-10 h-10'></div>
+                    <div className='w-10 h-10 rounded-full bg-slate-400'></div>
 
-                    <div className='text-left text-sm' >
+                    <div className='text-sm text-left' >
                         <div className='font-semibold'>Club of Coders</div>
                         <div className=''>@clubofcoderscom</div>
                     </div>
